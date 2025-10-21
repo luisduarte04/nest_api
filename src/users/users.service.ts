@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-
-
+import { ConflictException } from '@nestjs/common';
 
 @Injectable()
 export class userService{
@@ -11,32 +10,48 @@ export class userService{
   async getAllUsers(){
     return await this.prisma.user.findMany()
   }
-  async createUser(data: {email: string, name: string, password: string}){
+  async createUser(data: { email: string; name: string; password: string }) {
     const userExists = await this.prisma.user.findUnique({
-      where: {
-        email: data.email
-      }
-    }) 
-    if(userExists){
-      console.error("Usuário já tem cadastro")
+        where: {
+            email: data.email,
+        },
+    });
+
+    if (userExists) {
+        throw new ConflictException('Usuário já está cadastrado.');
     }
-    return await this.prisma.user.create({data})
+
+    return await this.prisma.user.create({ data });
+}
+  async updateUser(id: number, data: {email?: string, name?: string, password?: string}){
+  const user = await this.prisma.user.findUnique({
+    where: {
+      id
+    }
+  });
+  if (!user) {
+    throw new Error('User não existe');
   }
-  async updateUser(id: number, data: {email?: string; name?: string; password?: string }){
-    const numericId = id;
+  const response = await this.prisma.user.update({
+    where: { id },
+    data
+  });
+  return response
+  }
+  async getByID(id){
     const user = await this.prisma.user.findUnique({
       where: {
-        id: numericId
+        id: Number(id)
       }
     })
-    if(!user){
-      console.log("User não encontrado")
+    if (!user) {
+      throw new Error("User not found");
     }
-    const response = await this.prisma.user.update({
-      where: {id},
-      data
-    })
-    return response
+    return user
   }
-  
+  async deleteUser(id: number){
+    return this.prisma.user.delete({
+      where: {id}
+    })
+  }
 }
