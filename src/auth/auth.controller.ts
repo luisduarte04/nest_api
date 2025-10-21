@@ -20,4 +20,9 @@ export class AuthController {
             return error
         }
     }
+    @UseGuards(AuthGuard)
+    @Get('profile')
+    getProfile(@Request() req) {
+        return req.user;
+  }
 }

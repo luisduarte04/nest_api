@@ -1,21 +1,18 @@
-import { ConflictException, Injectable, UseGuards } from '@nestjs/common';
+import { ConflictException, Injectable, Request, UseGuards } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-@UseGuards(AuthGuard)
 @Injectable()
 export class QuestionsService {
   constructor(
     private readonly prisma: PrismaService
   ) {}
-  async create(createQuestionDto: CreateQuestionDto) {
-    const userId = 1
+  async create(createQuestionDto: CreateQuestionDto, @Request() userId:any) {
     return await this.prisma.questions.create({
       data: {...createQuestionDto, userId}
     })
   }
-
   async findAll() {
     return await this.prisma.questions.findMany()
   }
