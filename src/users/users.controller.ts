@@ -10,6 +10,7 @@ export class userController{
         private readonly userService: userService
     ) {}
     @Get()
+    @UseGuards(AuthGuard)
     async getAllUsers(){
         try{
 
@@ -40,6 +41,7 @@ export class userController{
         }
     }
     @Patch(":id")
+    @UseGuards(AuthGuard)
     async updateUser(@Param("id") id: number, @Body() data: {email?: string, name?: string, password?: string}) {
         try {
             const response = await this.userService.updateUser(Number(id), data);
@@ -50,8 +52,8 @@ export class userController{
             return { message: error };
         }
     }
-    @UseGuards(AuthGuard)
     @Get(":id")
+    @UseGuards(AuthGuard)
     async getByID(@Param("id") id: number){
         try{
             const user = await this.userService.getByID(Number(id))
@@ -65,6 +67,7 @@ export class userController{
         }
     }
     @Delete(":id")
+    @UseGuards(AuthGuard)
     async deleteUser(@Param("id") id: number){
         try{
             const user = await this.userService.deleteUser(Number(id))
