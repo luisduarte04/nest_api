@@ -41,7 +41,7 @@ export class userService{
   async getByID(id){
     const user = await this.prisma.user.findUnique({
       where: {
-        id: Number(id)
+        id: id
       }
     })
     if (!user) {
