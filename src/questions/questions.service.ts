@@ -43,8 +43,12 @@ export class QuestionsService {
     const question = await this.prisma.questions.findUnique({
       where: { id}
     })
+    
+    if (!question) {
+      throw new ConflictException("Questão não encontrada.");
+    }
     return await this.prisma.questions.delete({
-      where: {id: question?.id}
+      where: { id }
     })
   }
 }

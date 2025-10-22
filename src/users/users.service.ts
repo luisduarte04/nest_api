@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { ConflictException } from '@nestjs/common';
 
@@ -30,7 +30,7 @@ export class userService{
     }
   });
   if (!user) {
-    throw new Error('User não existe');
+    return await new NotFoundException('User não existe');
   }
   const response = await this.prisma.user.update({
     where: { id },
